@@ -23,7 +23,7 @@ public class TradePipelineBuilder
 
         var batch = new BatchBlock<Trade>(batchSize);
 
-        var retryingTransform = new TransformBlock<Trade[], Trade[]>(async trades =>
+        var retryingTransform = new TransformBlock<Trade[], Trade[]>(trades =>
         {
             // Polly goes here 
             return trades;
