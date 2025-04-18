@@ -1,6 +1,7 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using BopLeap.Core.Json;
 using BopLeap.Core.Models;
 using MessagePack;
 
@@ -21,17 +22,13 @@ internal class BinanceWebSocketClient
 
         while (_webSocket.State == WebSocketState.Open)
         {
-            var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
+            WebSocketReceiveResult result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
             if (result.MessageType == WebSocketMessageType.Close) break;
-
-            var json = Encoding.UTF8.GetString(buffer, 0, result.Count);
-
+            ReadOnlySpan<byte> jsonSpan = buffer.AsSpan(0, result.Count);
             try
             {
-                using var doc = JsonDocument.Parse(json);
-                var data = doc.RootElement.GetProperty("data").GetRawText();
-                var binary = Convert.FromBase64String(data);
-                var trade = MessagePackSerializer.Deserialize<Trade>(binary);
+                Trade trade = JsonSerializer.Deserialize(jsonSpan, BinanceJsonContext.Default.Trade);
+
                 onTradeReceived(trade);
             }
             catch (Exception ex)

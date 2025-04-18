@@ -1,12 +1,14 @@
-﻿using System.Threading.Tasks.Dataflow;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks.Dataflow;
 using BopLeap.Core.Models;
 using InfluxDB.Client;
 using InfluxDB.Client.Api.Domain;
 using InfluxDB.Client.Writes;
 
-namespace BopLeap.Core.Dataflow
+namespace BopLeap.Core.Services
 {
-    internal static class InfluxWriterBlock
+    internal  class InfluxWriterService
     {
         public static ActionBlock<Trade[]> Create(string influxUrl, string token, string org, string bucket)
         {
@@ -18,7 +20,7 @@ namespace BopLeap.Core.Dataflow
                 BoundedCapacity = 10
             };
 
-            return new ActionBlock<Trade[]>((Func<Trade[], Task>)(trades =>
+            var block = new ActionBlock<Trade[]>(trades =>
             {
                 try
                 {
@@ -37,8 +39,9 @@ namespace BopLeap.Core.Dataflow
                 {
                     Console.WriteLine($"[InfluxWriter] Error writing to InfluxDB: {ex.Message}");
                 }
-            }), options);
-        }
+            }, options);
 
+            return block;
+        }
     }
 }

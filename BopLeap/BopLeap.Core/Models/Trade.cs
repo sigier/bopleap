@@ -1,33 +1,33 @@
-﻿using MessagePack;
+﻿using System.Text.Json.Serialization;
 
 
 namespace BopLeap.Core.Models
 {
-    [MessagePackObject]
+     
     public class Trade
     {
-        [Key("e")]
+        [JsonPropertyName("e")]
         public string EventType { get; set; }
 
-        [Key("E")]
+        [JsonPropertyName("E")]
         public long EventTime { get; set; }
 
-        [Key("s")]
+        [JsonPropertyName("s")]
         public string Symbol { get; set; }
 
-        [Key("t")]
+        [JsonPropertyName("t")]
         public long TradeId { get; set; }
 
-        [Key("p")]
+        [JsonPropertyName("p")]
         public string Price { get; set; }
 
-        [Key("q")]
+        [JsonPropertyName("q")]
         public string Quantity { get; set; }
 
-        [Key("T")]
+        [JsonPropertyName("T")]
         public long TradeTime { get; set; }
 
-        [Key("m")]
+        [JsonPropertyName("m")]
         public bool IsBuyerMarketMaker { get; set; }
     }
 
